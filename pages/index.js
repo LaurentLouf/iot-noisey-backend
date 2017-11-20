@@ -5,7 +5,8 @@ import {LineChart} from 'react-d3';
 
 export default class extends Component {
 
-  static async getInitialProps ({ req }) {
+  static async getInitialProps ({ req }) 
+  {
     if (req) {
       // If `req` is defined, we're rendering on the server and should use
       // MongoDB directly. You could also use the REST API, but that's slow
@@ -23,7 +24,8 @@ export default class extends Component {
     return { list }
   }
 
-  constructor() {
+  constructor() 
+  {
     super();
     this.state= {
       test: "Coucou list"

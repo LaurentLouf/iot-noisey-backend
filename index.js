@@ -1,15 +1,16 @@
-const { MongoClient } = require('mongodb');
-const api = require('./lib/api');
-const body = require('body-parser');
-const co = require('co');
+const mongo   = require('mongodb');
+const api     = require('./lib/api');
+const body    = require('body-parser');
+const co      = require('co');
 const express = require('express');
-const next = require('next');
+const next    = require('next');
 
-const dev = process.env.NODE_ENV !== 'production';
-const app = next({ dev });
-const handle = app.getRequestHandler();
+const dev     = process.env.NODE_ENV !== 'production';
+const app     = next({ dev });
+const handle  = app.getRequestHandler();
 
-const MONGO_URL = 'mongodb://login:pass@mongoserver:port/dbname'
+// Users are managed at DB level
+const MONGO_URL = 'mongodb://root:toor@localhost:27017/noisey'
 const PORT = 3000;
 
 co(function * () {
@@ -17,7 +18,7 @@ co(function * () {
   yield app.prepare();
 
   console.log(`Connecting to ${MONGO_URL}`);
-  const db = yield MongoClient.connect(MONGO_URL)
+  const db = yield mongo.connect(MONGO_URL)
 
   // Configure express to expose a REST API
   const server = express();
