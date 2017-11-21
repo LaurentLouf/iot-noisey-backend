@@ -22,6 +22,7 @@
     "react": "^15.5.4",
     "react-d3": "^0.4.0",
     "react-dom": "^15.5.4",
-    "superagent": "^3.5.2"
+    "superagent": "^3.5.2",
+    "react-heatmap": "^1.0.6"
   }
 }
