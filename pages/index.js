@@ -7,19 +7,29 @@ export default class extends Component {
 
   static async getInitialProps ({ req }) 
   {
-    if (req) {
+    if (req) 
+    {
       // If `req` is defined, we're rendering on the server and should use
       // MongoDB directly. You could also use the REST API, but that's slow
       // and inelegant.
       const { db } = req
       // Note that `db` above comes from express middleware
-      const list = await db.collection('devices').find().sort({ createdAt: -1 })
-        .toArray()
+      const listDevices = await db.collection('devices').find().sort({ lastConnection: -1 }).toArray()
+      var list = [] 
+      
+      for ( var iDevices = 0 ; iDevices < listDevices.length ; iDevices++ )
+      {
+        var currentList = { 'fullID' : listDevices[iDevices].fullID, 'shortID' : listDevices[iDevices].shortID, 'lastConnection' : listDevices[iDevices].lastConnection } 
+        const listData  = await db.collection('data').find({ "date": {  $gte: new Date(Date.now() - 1 * 1000 * 60 * 60)}, 'deviceFullID' : listDevices[iDevices].fullID}).sort({'date' : 1}).toArray()
+        currentList.data = listData ; 
+        list.push(currentList)
+      }
+
       return { list }
     }
 
     // Otherwise, we're rendering on the client and need to use the API
-    const { list } = await superagent.get('http://localhost:3000/api')
+    var { list } = await superagent.get('http://localhost:3000/api')
       .then(res => res.body)
     return { list }
   }
@@ -32,34 +42,35 @@ export default class extends Component {
     };
   }
 
-  render() {
-        var test = this.props.list;
-        var lineData = [
-          { 
-            name: 'series1',
-            values: [ { x: 0, y: 20 }, { x: 1, y: 30 }, { x: 2, y: 10 }, { x: 3, y: 5 }, { x: 4, y: 8 }, { x: 5, y: 15 }, { x: 6, y: 10 } ],
-            strokeWidth: 3,
-            strokeDashArray: "5,5",
-          },
-          {
-            name: 'series2',
-            values : [ { x: 0, y: 8 }, { x: 1, y: 5 }, { x: 2, y: 20 }, { x: 3, y: 12 }, { x: 4, y: 4 }, { x: 5, y: 6 }, { x: 6, y: 2 } ]
-          },
-          {
-            name: 'series3',
-            values: [ { x: 0, y: 0 }, { x: 1, y: 5 }, { x: 2, y: 8 }, { x: 3, y: 2 }, { x: 4, y: 6 }, { x: 5, y: 4 }, { x: 6, y: 2 } ]
-          } 
-        ];
-        return (
-            <div>
-              {JSON.stringify(test)}
-              <LineChart
-                data={lineData}
-                width={600}
-                height={300}
-              />
-            </div>
-        );
+  render() 
+  {
+    var deviceData = this.props.list ;
+
+    var lineData = [] ;
+    for ( var iDevice = 0 ; iDevice < deviceData.length ; iDevice++ )
+    {
+      if ( deviceData[iDevice].data.length > 0 )
+      {
+        var line = {name: deviceData[iDevice].fullID, values: [] } ;
+        for ( var iData = 0 ; iData < deviceData[iDevice].data.length ; iData++  )
+        {
+          line.values.push({x: new Date(deviceData[iDevice].data[iData].date), y: deviceData[iDevice].data[iData].data }) ; 
+        }
+        
+        lineData.push(line) ; 
+      }
+
+    }
+
+    return (
+        <div>
+          <LineChart
+            data={lineData}
+            width={1500}
+            height={800}
+          />
+        </div>
+    );
   }
 
   /* ... */
