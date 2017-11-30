@@ -58,5 +58,5 @@ co(function * () {
   httpServer.listen(PORT_HTTP);
   httpsServer.listen(PORT_HTTPS);
 
-  console.log(`Listening on ${PORT}`);
+  console.log(`Listening on ${PORT_HTTPS}`);
 }).catch(error => console.error(error.stack))
