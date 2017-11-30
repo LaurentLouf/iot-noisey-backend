@@ -10,8 +10,9 @@ const app     = next({ dev });
 const handle  = app.getRequestHandler();
 
 // Users are managed at DB level
-const MONGO_URL = 'mongodb://root:toor@localhost:27017/noisey'
-const PORT = 3000;
+const MONGO_URL   = 'mongodb://root:toor@localhost:27017/noisey'
+const PORT_HTTP   = 8080;
+const PORT_HTTPS  = 8443;
 
 co(function * () {
   // Initialize the Next.js app
@@ -20,14 +21,27 @@ co(function * () {
   console.log(`Connecting to ${MONGO_URL}`);
   const db = yield mongo.connect(MONGO_URL)
 
+  var fs      = require('fs')
+  var options = {
+    key: fs.readFileSync('privateKey.key'),
+    cert: fs.readFileSync('certificate.crt')
+  };
+
   // Configure express to expose a REST API
   const server = express();
 
   server.use(body.json());
   server.use((req, res, next) => {
-    // Also expose the MongoDB database handle so Next.js can access it.
-    req.db = db
-    next()
+    if (req.secure) 
+    {
+      // Also expose the MongoDB database handle so Next.js can access it.
+      req.db = db
+      next();
+    } 
+    else 
+    {
+      res.redirect('https://' + req.headers.host + req.url);
+    }
   });
   server.use('/api', api(db));
 
@@ -36,6 +50,13 @@ co(function * () {
     return handle(req, res);
   });
 
-  server.listen(PORT);
+  var https       = require('https');
+  var http        = require('http');
+  var httpServer  = http.createServer(server);
+  var httpsServer = https.createServer(options, server);
+
+  httpServer.listen(PORT_HTTP);
+  httpsServer.listen(PORT_HTTPS);
+
   console.log(`Listening on ${PORT}`);
 }).catch(error => console.error(error.stack))
