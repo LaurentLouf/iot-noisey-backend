@@ -12,10 +12,16 @@
 ## 		psk="password"
 ## 	}
 ## 
+## To avoid guessing the IP of the board when connecting through Ethernet, the following
+## could be appended to /etc/dhcpd.conf 
+## interface eth0
+## static ip_address=142.241.142.241/24
+## static routers=142.241.142.1
+## static domain_name_servers=142.241.142.1
 
 ## Update the sources list, upgrade the pre-installed software and install most dependencies
 sudo apt-get update 
-sudo apt-get upgrade  
+sudo apt-get upgrade -y 
 sudo apt-get install -y gedit curl lsb-release apt-transport-https build-essential nginx mongodb 
 
 ## Recent version of Node.js
@@ -25,13 +31,13 @@ DISTRO="$(lsb_release -s -c)"
 echo "deb https://deb.nodesource.com/$VERSION $DISTRO main" | sudo tee /etc/apt/sources.list.d/nodesource.list
 echo "deb-src https://deb.nodesource.com/$VERSION $DISTRO main" | sudo tee -a /etc/apt/sources.list.d/nodesource.list
 sudo apt-get update
-sudo apt-get install nodejs 
+sudo apt-get install -y nodejs 
+## Installation of npm modules for the project
+npm install 
 
 ## Initialization of the database
 mongo admin  --eval "db.getSiblingDB('noisey').createUser({user: 'root', pwd: 'toor', roles: [{role: 'dbOwner', db: 'noisey'}]})"
 
-## Fetch the IP address 
-ip -f inet -br addr show wlan0
 ## Create certificate and key
 openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout privateKey.key -out certificate.crt
 sudo mkdir /etc/nginx/ssl
@@ -42,4 +48,6 @@ sudo ln -s /etc/nginx/sites-available/noisey /etc/nginx/sites-enabled/noisey
 sudo rm /etc/nginx/sites-enabled/default
 sudo service nginx restart
 
-sudo service nginx start
+## Display SHA1 fingerprint of the certificate and interfaces to fetch their IP address
+openssl x509 -noout -fingerprint -sha1 -inform pem -in certificate.crt
+sudo ifconfig 
