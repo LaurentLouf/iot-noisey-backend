@@ -34,5 +34,12 @@ mongo admin  --eval "db.getSiblingDB('noisey').createUser({user: 'root', pwd: 't
 ip -f inet -br addr show wlan0
 ## Create certificate and key
 openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout privateKey.key -out certificate.crt
+sudo mkdir /etc/nginx/ssl
+sudo cp privateKey.key /etc/nginx/ssl/noiseyKey.key 
+sudo cp certificate.crt /etc/nginx/ssl/noiseyCertificate.crt  
+sudo cp nginx.conf /etc/nginx/sites-available/noisey 
+sudo ln -s /etc/nginx/sites-available/noisey /etc/nginx/sites-enabled/noisey
+sudo rm /etc/nginx/sites-enabled/default
+sudo service nginx restart
 
 sudo service nginx start
