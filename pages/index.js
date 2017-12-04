@@ -73,8 +73,10 @@ export default class extends Component {
               data={lineData}
               width={1500}
               height={800}
+              legend={true}
+              title={"Niveaux de bruit"}
             />
-          </div>
+          </div><br/><br/>
 
           <div style={{width: 950, height: 850, backgroundImage: `url('https://lh3.googleusercontent.com/5kzwGd1E6wRFFhTQDAQZXj7LFi_epSer1DLXF4-UF3JlROMorWCf0QN2CgftQhcq_CSBt8hOWDwVuNAWeFqyZBKUSFMCYpxz_19IDamHH9ffi86_0bA19OLaXeTAXZcDHe_USj7IeGvamy7PW_5Lq51rEbY-a3luKkGGyLslr9eoDyAKfCG86wFgUzCZlWumo6wGGS0NYq__TrIC9uvkHb1X6fpB43rDjriTVttDPi8PJ4f9LBI4MLUDdslkr44KeK9dENB1CuVsKQzSEJ3LlRNvLBa97wpcLY5A6lqvpyZWtYKTfPFW-fgfWyrUi2s0RaV4OTZZ7Fn5G991sqX9lX0V2erCToJ29pgjXSsaF6qempSJ3EtW9lrWgJE3KOfbrl2qlDqZCh2YsdlYKx-r4cAfr4wrgg8bJwU1oCDyZ2mAHGelNDaU1mDNhZtVgdHqaqlOwMliG8N1UbMghCcWLiVIbEnAm9zSIsc9_HSNyZLxImkYX-MVNrUp1pW2fnfBP8oNcleFHkps7f2YqOGKh8oqh6BKM4CiTxtrNedc0tn8gahTr47NDAk2X8o7lj2SPmp9TYUn1gsvhIejaCB5MCVSOPc4deWDaAbKq7O3=w950-h850-no')`}} >
             <ReactHeatmap max={20} data={heatData} radius={100} />
