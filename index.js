@@ -1,5 +1,6 @@
 const mongo   = require('mongodb');
 const api     = require('./lib/api');
+const config  = require('./lib/config');
 const body    = require('body-parser');
 const co      = require('co');
 const express = require('express');
@@ -44,6 +45,8 @@ co(function * () {
     }
   });
   server.use('/api', api(db));
+  server.use('/config', config(db));
+  server.use(express.static(__dirname + '/public'));
 
   // Everything that isn't '/api' gets passed along to Next.js
   server.get('*', (req, res) => {

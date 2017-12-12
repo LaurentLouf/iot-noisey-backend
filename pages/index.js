@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
-import * as superagent from 'superagent';
-import 'isomorphic-fetch';
+import * as superagent from 'superagent'
 import {LineChart} from 'react-d3';
 
 const ReactHeatmap = require('react-heatmap');
