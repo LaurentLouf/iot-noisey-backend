@@ -11,18 +11,11 @@
 ## 		ssid="ssid"
 ## 		psk="password"
 ## 	}
-## 
-## To avoid guessing the IP of the board when connecting through Ethernet, the following
-## could be appended to /etc/dhcpd.conf 
-## interface eth0
-## static ip_address=142.241.142.241/24
-## static routers=142.241.142.1
-## static domain_name_servers=142.241.142.1
 
 ## Update the sources list, upgrade the pre-installed software and install most dependencies
 sudo apt-get update 
 sudo apt-get upgrade -y 
-sudo apt-get install -y gedit curl lsb-release apt-transport-https build-essential nginx mongodb 
+sudo apt-get install -y gedit curl lsb-release apt-transport-https build-essential nginx mongodb iw hostapd dnsmasq
 
 ## Recent version of Node.js
 curl --silent https://deb.nodesource.com/gpgkey/nodesource.gpg.key | sudo apt-key add -
@@ -43,7 +36,7 @@ openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout privateKey.k
 sudo mkdir /etc/nginx/ssl
 sudo cp privateKey.key /etc/nginx/ssl/noiseyKey.key 
 sudo cp certificate.crt /etc/nginx/ssl/noiseyCertificate.crt  
-sudo cp nginx.conf /etc/nginx/sites-available/noisey 
+sudo cp config/nginx.conf /etc/nginx/sites-available/noisey 
 sudo ln -s /etc/nginx/sites-available/noisey /etc/nginx/sites-enabled/noisey
 sudo rm /etc/nginx/sites-enabled/default
 sudo service nginx restart
@@ -51,6 +44,20 @@ sudo service nginx restart
 ## Installation of PM2
 sudo npm install pm2 -g
 pm2 start index.js
+
+## Configure the hotspot : interfaces and hostapd first
+sudo cp config/dhcpcd.conf /etc/dhcpcd.conf 
+sudo cp config/interfaces /etc/network/interfaces
+sudo service dhcpcd restart
+sudo ifdown wlan0
+sudo ifup wlan0
+sudo cp config/hostapd.conf /etc/hostapd/
+sudo cp config/hostapd /etc/default/
+sudo service hostapd restart
+# Then dnsmasq
+sudo mv /etc/dnsmasq.conf /etc/dnsmasq.conf.bak
+sudo cp config/dnsmasq.conf /etc/dnsmasq.conf
+sudo service dnsmasq restart
 
 ## Display SHA1 fingerprint of the certificate and interfaces to fetch their IP address
 openssl x509 -noout -fingerprint -sha1 -inform pem -in certificate.crt
