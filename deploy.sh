@@ -48,6 +48,10 @@ sudo ln -s /etc/nginx/sites-available/noisey /etc/nginx/sites-enabled/noisey
 sudo rm /etc/nginx/sites-enabled/default
 sudo service nginx restart
 
+## Installation of PM2
+sudo npm install pm2 -g
+pm2 start index.js
+
 ## Display SHA1 fingerprint of the certificate and interfaces to fetch their IP address
 openssl x509 -noout -fingerprint -sha1 -inform pem -in certificate.crt
 sudo ifconfig 
