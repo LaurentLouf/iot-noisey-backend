@@ -45,13 +45,8 @@ co(function * () {
     }
   });
   server.use('/api', api(db));
-  server.use('/config', config(db));
+  server.use('/', config(db));
   server.use(express.static(__dirname + '/public'));
-
-  // Everything that isn't '/api' gets passed along to Next.js
-  server.get('*', (req, res) => {
-    return handle(req, res);
-  });
 
   var https       = require('https');
   var http        = require('http');
