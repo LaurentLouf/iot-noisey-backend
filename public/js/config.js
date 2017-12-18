@@ -99,8 +99,6 @@ $(function()
 			url:"./api/chartData",
 			success: function(response)
 			{
-				console.log(chart.data) ; 
-
 				for ( var iDevice = 0 ; iDevice < response.length ; iDevice++ )
 				{
 					var deviceInChart = -1 ; 
@@ -131,8 +129,6 @@ $(function()
 					// Update the points if the device is already displayed on the chart
 					else
 					{
-						console.log("Device found at dataset n°" + deviceInChart) ; 
-
 						for ( var iData = 0 ; iData < response[iDevice].values.length ; iData++ )
 						{
 							var dateData = new Date(response[iDevice].values[iData].x) ; 
@@ -147,7 +143,6 @@ $(function()
 				}
 			    chart.update();
 
-				console.log(response) ; 
 				setTimeout(refreshGraph, 5*1000) ; 
 			} 
 		}) ;
