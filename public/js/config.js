@@ -1,7 +1,39 @@
 $(function() 
 {
-	var timeouts = [] ; 
+	var timeouts 	= [] ; 
+	var iColor 		= 0 ;
+	var colors 		= ["#F44336", "#E91E63", "#9C27B0", "#673AB7", "#3F51B5", "#2196F3", "#03A9F4", "#00BCD4", "#009688", "#4CAF50", "#8BC34A", "#CDDC39", "#FFEB3B", "#FFC107", "#FF9800", "#FF5722", "#795548"] ; 
 
+
+	// Chart definition 
+	var chartContext = document.getElementById("chart").getContext('2d');
+	var chart = new Chart(chartContext, {
+	    type: 'scatter',
+	    data: { datasets: [] }, 
+	    options: {
+	        scales: {
+	            xAxes: [{
+	                type: 'time',
+	                position: 'bottom'
+	            }],
+	            yAxes: [{
+	                ticks: {
+	                    beginAtZero:true,
+		                min: 0,
+		                max: 120
+	                },
+	            }]
+	        },
+	        title: {
+	            display: true,
+	            text: 'Niveaux de bruit'
+	        },
+			showLines: true,
+            spanGaps: true
+	    }
+	});
+
+	// Make the border of a device card blink, meaning a value changed successfully 
 	function blinkCard(id)
 	{
 		for ( var iTimeout = 0 ; iTimeout < timeouts.length ; iTimeout ++ )
@@ -16,6 +48,7 @@ $(function()
 		}, 1500) } ) ; 
 	}
 
+	// Change of configuration
 	$( "select" ).change(function() 
 	{	
 		var splitID = $(this).attr("id").split("-") ; 
@@ -26,8 +59,6 @@ $(function()
 			data: JSON.stringify({ fullID: splitID[1], field: splitID[0], value: $(this)[0].options[$(this)[0].selectedIndex].value }),
 			success: function(response) { blinkCard(response.fullID) ; } }) ;
 	}) ; 
-
-
 	$( "input" ).change(function () 
 	{
 		var splitID = $(this).attr("id").split("-") ; 
@@ -38,6 +69,91 @@ $(function()
 			data: JSON.stringify({ fullID: splitID[1], field: splitID[0], value: $(this).val() }),
 			success: function(response) { blinkCard(response.fullID) ; } }) ;
 	}) ;
+
+	// Navigation management
+	$(".nav-item a").click(function ()
+	{
+		var itemDisplay = $(this).attr('href') ; 
+
+		$(".nav-item a").each(function() 
+		{
+			if ( $($(this).attr('href')).attr('class').indexOf("d-none") != -1 && $(this).attr('href') == itemDisplay )
+			{
+				$($(this).attr('href')).removeClass("d-none") ;
+				$(this).parent().addClass("active") ; 	
+			}
+			else if ( $(this).attr('href') != itemDisplay )
+			{
+				$($(this).attr('href')).addClass("d-none") ;
+				$(this).parent().removeClass("active") ;
+			}
+		}) ; 
+
+	}) ; 
+
+
+	// Function to refresh the graph : add new series, add new data
+	function  refreshGraph()
+	{
+		$.get({
+			url:"./api/chartData",
+			success: function(response)
+			{
+				console.log(chart.data) ; 
+
+				for ( var iDevice = 0 ; iDevice < response.length ; iDevice++ )
+				{
+					var deviceInChart = -1 ; 
+					for ( var iSeries = 0 ; iSeries < chart.data.datasets.length && deviceInChart == -1 ; iSeries++ )
+					{
+						if ( chart.data.datasets[iSeries].id == response[iDevice].id )
+						{
+							deviceInChart = iSeries ; 
+						}
+					}
+
+					// If the device is not already displayed on the chart, add it
+					if ( deviceInChart == -1)
+					{
+						chart.data.datasets.push( {
+							id: response[iDevice].id, 
+							lastDate: new Date(response[iDevice].values[ response[iDevice].values.length - 1 ].x),
+							label: response[iDevice].name, 
+							data: response[iDevice].values, 
+							borderColor: colors[iColor], 
+							backgroundColor: "rgba(0,0,0,0)",
+				            pointBorderColor: colors[iColor],
+				            pointBackgroundColor: colors[iColor],
+				            pointBorderWidth: "1"
+				        } ) ;
+				        iColor = (iColor + 1) % colors.length ; 
+					}
+					// Update the points if the device is already displayed on the chart
+					else
+					{
+						console.log("Device found at dataset n°" + deviceInChart) ; 
+
+						for ( var iData = 0 ; iData < response[iDevice].values.length ; iData++ )
+						{
+							var dateData = new Date(response[iDevice].values[iData].x) ; 
+							if ( dateData > chart.data.datasets[deviceInChart].lastDate )
+							{
+								chart.data.datasets[deviceInChart].data.push( response[iDevice].values[iData] ) ;  
+							}
+						}
+						chart.data.datasets[deviceInChart].lastDate = new Date(response[iDevice].values[ response[iDevice].values.length - 1 ].x) ;
+					}
+
+				}
+			    chart.update();
+
+				console.log(response) ; 
+				setTimeout(refreshGraph, 5*1000) ; 
+			} 
+		}) ;
+	}
+
+	refreshGraph() ; 
 
 
 });
