@@ -39,5 +39,27 @@ $(function()
 			success: function(response) { blinkCard(response.fullID) ; } }) ;
 	}) ;
 
+	// Navigation management
+	$(".nav-item a").click(function ()
+	{
+		var itemDisplay = $(this).attr('href') ; 
+
+		$(".nav-item a").each(function() 
+		{
+			if ( $($(this).attr('href')).attr('class').indexOf("d-none") != -1 && $(this).attr('href') == itemDisplay )
+			{
+				$($(this).attr('href')).removeClass("d-none") ;
+				$(this).parent().addClass("active") ; 	
+			}
+			else if ( $(this).attr('href') != itemDisplay )
+			{
+				$($(this).attr('href')).addClass("d-none") ;
+				$(this).parent().removeClass("active") ;
+			}
+		}) ; 
+
+	}) ; 
+
+
 
 });
