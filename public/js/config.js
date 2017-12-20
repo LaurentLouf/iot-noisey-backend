@@ -151,5 +151,9 @@ $(function()
 
 	refreshGraph() ; 
 
-
+	// Send data to endpoint to trigger compilation
+	$.post( { url:"./", contentType : 'application/json', data: JSON.stringify({ }) }) ;
+	$.post( { url:"./api/device/", contentType : 'application/json', data: JSON.stringify({ }) }) ;
+	$.post( { url:"./api/data/", contentType : 'application/json', data: JSON.stringify({ }) }) ;
+	$.get( { url:"./api/device/" }) ;
 });
