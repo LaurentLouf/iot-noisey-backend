@@ -138,6 +138,7 @@ $(function()
 							}
 						}
 						chart.data.datasets[deviceInChart].lastDate = new Date(response[iDevice].values[ response[iDevice].values.length - 1 ].x) ;
+						chart.data.datasets[deviceInChart].label 	= response[iDevice].name ; 
 					}
 
 				}
