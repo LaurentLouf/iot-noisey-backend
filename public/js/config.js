@@ -96,7 +96,7 @@ $(function()
 	function  refreshGraph()
 	{
 		$.get({
-			url:"./api/chartData",
+			url:"./api/chartData/",
 			success: function(response)
 			{
 				for ( var iDevice = 0 ; iDevice < response.length ; iDevice++ )
