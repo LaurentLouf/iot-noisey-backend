@@ -144,10 +144,8 @@ $(function()
 
 				}
 			    chart.update();
-
-				setTimeout(refreshGraph, 5*1000) ; 
-			} 
-		}) ;
+			}
+		}).always( function() { setTimeout(refreshGraph, 5*1000) ;  } ) ;
 	}
 
 
