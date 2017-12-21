@@ -20,7 +20,7 @@ $(function()
 	                ticks: {
 	                    beginAtZero:true,
 		                min: 0,
-		                max: 120
+		                max: 450
 	                },
 	            }]
 	        },
@@ -122,7 +122,8 @@ $(function()
 							backgroundColor: "rgba(0,0,0,0)",
 				            pointBorderColor: colors[iColor],
 				            pointBackgroundColor: colors[iColor],
-				            pointBorderWidth: "1"
+				            pointBorderWidth: "1",
+				            pointRadius: 0
 				        } ) ;
 				        iColor = (iColor + 1) % colors.length ; 
 					}
