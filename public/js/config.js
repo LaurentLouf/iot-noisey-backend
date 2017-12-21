@@ -3,6 +3,7 @@ $(function()
 	var timeouts 	= [] ; 
 	var iColor 		= 0 ;
 	var colors 		= ["#F44336", "#E91E63", "#9C27B0", "#673AB7", "#3F51B5", "#2196F3", "#03A9F4", "#00BCD4", "#009688", "#4CAF50", "#8BC34A", "#CDDC39", "#FFEB3B", "#FFC107", "#FF9800", "#FF5722", "#795548"] ; 
+	var maxValueYAxis = 150 ; 
 
 
 	// Chart definition 
@@ -109,6 +110,14 @@ $(function()
 							deviceInChart = iSeries ; 
 						}
 					}
+
+					// Update the max value for the y axis if needed
+					for ( var iValue = 0 ; iValue < response[iDevice].values.length ; iValue++ ) 
+					{
+						if ( response[iDevice].values[iValue].y > maxValueYAxis  )
+							maxValueYAxis = response[iDevice].values[iValue].y ; 
+					}
+					chart.options.scales.yAxes[0].ticks.max = maxValueYAxis + 5 ;
 
 					// If the device is not already displayed on the chart, add it
 					if ( deviceInChart == -1)
