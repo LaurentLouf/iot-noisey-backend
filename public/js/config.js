@@ -122,8 +122,8 @@ $(function()
 							backgroundColor: "rgba(0,0,0,0)",
 				            pointBorderColor: colors[iColor],
 				            pointBackgroundColor: colors[iColor],
-				            pointBorderWidth: "1",
-				            pointRadius: 0
+				            pointBorderWidth: "0",
+					    	pointRadius: 0
 				        } ) ;
 				        iColor = (iColor + 1) % colors.length ; 
 					}
@@ -150,7 +150,22 @@ $(function()
 		}) ;
 	}
 
+
+	function sendDateServer()
+	{
+		var dateNow = new Date() ; 
+		$.post( {
+			url:"./date/", 
+			contentType : 'application/json', 
+			data: JSON.stringify({ date: dateNow } ), 
+			success: function(response) { console.log(response) ; } } ) ;
+
+		setTimeout(sendDateServer, 5*1000) ;
+	}
+
+
 	refreshGraph() ; 
+	sendDateServer() ; 
 
 	// Send data to endpoint to trigger compilation
 	$.post( { url:"./", contentType : 'application/json', data: JSON.stringify({ }) }) ;
