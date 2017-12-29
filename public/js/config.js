@@ -2,7 +2,8 @@ $(function()
 {
 	var timeouts 	= [] ; 
 	var iColor 		= 0 ;
-	var colors 		= ["#F44336", "#E91E63", "#9C27B0", "#673AB7", "#3F51B5", "#2196F3", "#03A9F4", "#00BCD4", "#009688", "#4CAF50", "#8BC34A", "#CDDC39", "#FFEB3B", "#FFC107", "#FF9800", "#FF5722", "#795548"] ; 
+	var colors 		= ["#F44336", "#2196F3", "#4CAF50", "#FF9800", "#E91E63", "#03A9F4", "#8BC34A", "#FF5722", "#9C27B0", "#00BCD4", "#CDDC39", "#795548", "#673AB7", "#FFC107", "#3F51B5", "#009688", "#FFEB3B"] ; 
+
 	var maxValueYAxis = 150 ; 
 
 
